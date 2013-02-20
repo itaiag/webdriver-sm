@@ -36,7 +36,7 @@ import org.testng.Reporter;
  * 
  * @author Liel Ran ,Create Date - 22.12.11
  */
-public class WebDriverSystemObject implements HasWebDriver {
+public class WebDriverSystemModule implements HasWebDriver {
 
 	// can be init from the SUT file.
 	// the path should be full path with "chromedriver.exe" at the end of the
@@ -46,7 +46,7 @@ public class WebDriverSystemObject implements HasWebDriver {
 	/**
 	 * the type of the browser to be open. e.g. IE/Chrome//FF
 	 */
-	protected WebDriverType webDriver;
+	protected WebDriverType webDriver = WebDriverType.FIREFOX_DRIVER;
 	/**
 	 * in case of true will not open the browser when init the system object.
 	 */
@@ -87,14 +87,13 @@ public class WebDriverSystemObject implements HasWebDriver {
 
 	private boolean clearCookiesBeforeOpen = false;
 	
-	public WebDriverSystemObject() throws Exception{
-		if (lazyInit == false) {
-			openBrowser();
-		}
+	public WebDriverSystemModule() throws Exception{
+//		if (lazyInit == false) {
+//			openBrowser();
+//		}
 		
 	}
 	
-
 	/**
 	 * Open the browser:
 	 * <ol>
@@ -457,7 +456,7 @@ public class WebDriverSystemObject implements HasWebDriver {
 				// "lib");
 				//
 
-				URL location = WebDriverSystemObject.class.getProtectionDomain().getCodeSource().getLocation();
+				URL location = WebDriverSystemModule.class.getProtectionDomain().getCodeSource().getLocation();
 
 				String file = location.getFile();
 
@@ -540,10 +539,10 @@ public class WebDriverSystemObject implements HasWebDriver {
 						+ firefoxExtension + " contains the firefoxExtension?");
 			}
 		}
+		if (null == profile) {
+			profile = new FirefoxProfile();
+		}
 		if (this.ignoreCertificateErrors) {
-			if (null == profile) {
-				profile = new FirefoxProfile();
-			}
 			Reporter.log("set accept Untrusted Certificates");
 			profile.setAcceptUntrustedCertificates(ignoreCertificateErrors);
 		}
