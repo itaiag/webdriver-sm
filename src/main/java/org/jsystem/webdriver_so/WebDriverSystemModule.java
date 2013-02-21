@@ -2,6 +2,7 @@ package org.jsystem.webdriver_so;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jsystem.webdriver_so.CurrentPageKeeper.AbstractPageObjectResolver;
 import org.jsystem.webdriver_so.eventlistener.WebDriverReportEventHandler;
+import org.jsystem.webdriver_so.utils.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -46,7 +48,7 @@ public class WebDriverSystemModule implements HasWebDriver {
 	/**
 	 * the type of the browser to be open. e.g. IE/Chrome//FF
 	 */
-	protected WebDriverType webDriver = WebDriverType.FIREFOX_DRIVER;
+	protected WebDriverType webDriver;
 	/**
 	 * in case of true will not open the browser when init the system object.
 	 */
@@ -320,28 +322,27 @@ public class WebDriverSystemModule implements HasWebDriver {
 		return new HtmlUnitDriver();
 	}
 
-//	private void copyResource(String sourcePath, File destination) {
-//		ClassLoader loader = LoadersManager.getInstance().getLoader();
-//		InputStream is = loader.getResourceAsStream(sourcePath);
-//		try {
-//			FileUtils.saveInputStreamToFile(is, destination);
-//		} catch (Exception e) {
-//			Reporter.log("Failed reasource" + sourcePath + " to File " + destination);
-//		} finally {
-//			try {
-//				is.close();
-//			} catch (IOException e) {
-//				Reporter.log("failed closing input stream for " + sourcePath);
-//			}
-//		}
-//	}
+	private void copyResource(String sourcePath, File destination) {
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(sourcePath);
+		try {
+			FileUtils.saveInputStreamToFile(is, destination);
+		} catch (Exception e) {
+			Reporter.log("Failed reasource" + sourcePath + " to File " + destination);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				Reporter.log("failed closing input stream for " + sourcePath);
+			}
+		}
+	}
 
 	protected WebDriver getInternetExplorerWebDriver() {
 		WebDriver webDriver = null;
 		try {
 
 			File IEDriverServerExe = File.createTempFile("IEDriverServer", ".exe");
-//			copyResource("IEDriverServer.exe", IEDriverServerExe);
+			copyResource("IEDriverServer.exe", IEDriverServerExe);
 			System.setProperty("webdriver.ie.driver", IEDriverServerExe.getAbsolutePath());
 			IEDriverServerExe.deleteOnExit();
 
@@ -588,17 +589,16 @@ public class WebDriverSystemModule implements HasWebDriver {
 		browserIsOpened = false;
 	}
 
-//	@Override
-//	public void close() {
-//		Reporter.log("Closing WebDriver System Object");
-//		try {
-//			closeBrowserInstance();
-//		} catch (Exception e) {
-//			Reporter.log("error in closing WebDriver System Object,Error=" + e.getMessage());
-//		} finally {
-//			pageKeeper = null;
-//		}
-//	}
+	public void close() {
+		Reporter.log("Closing WebDriver System Object");
+		try {
+			closeBrowserInstance();
+		} catch (Exception e) {
+			Reporter.log("error in closing WebDriver System Object,Error=" + e.getMessage());
+		} finally {
+			pageKeeper = null;
+		}
+	}
 
 	/*
 	 * feature added by Aharon @ 01/08/2012 - PageKeeper

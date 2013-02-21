@@ -54,7 +54,7 @@ public abstract class AbstractPageObject implements HasWebDriver {
 		assertInModule();
 	}
 
-	AbstractPageObject() {
+	protected AbstractPageObject() {
 	}
 
 	/**
